@@ -1,0 +1,22 @@
+version: "2"
+volumes:
+  cloud9:
+    external:
+      named: 54ac88bb2f3b18576a6dd28ffbf65641441ca84b754efe5f696c4727a5b85a4f
+services:
+  chromium:
+    image: docker.io/sassmann/debian-chromium
+    environment:
+      - DISPLAY
+    devices:
+      - /dev/dri/card0
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /run/user/$UID/pulse/native:/tmp/pulse:ro
+  cloud9:
+    image: tidyrailroad/cloud9:5.0.0
+    volumes:
+      - cloud9:/workspace
+    working_dir: /workspace
+    command: --listen 0.0.0.0 -w /workspace --auth user:password
+    

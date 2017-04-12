@@ -1,22 +1,35 @@
-version: "2"
+version: "3"
 volumes:
-  cloud9:
+  chromium-home:
+  thirdplanet-home:
+  thirdplanet-workspace:
+  gitlab-config:
+  gitlab-logs:
+  gitlab-data:
+  srv-entrypoint:
     external:
-      named: 54ac88bb2f3b18576a6dd28ffbf65641441ca84b754efe5f696c4727a5b85a4f
+      name: ${ENTRYPOINT}
 services:
   chromium:
-    image: docker.io/sassmann/debian-chromium
+    image: tidyrailroad/chromium:0.0.0
+    privileged: true
     environment:
       - DISPLAY
-    devices:
-      - /dev/dri/card0
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
-      - /run/user/$UID/pulse/native:/tmp/pulse:ro
-  cloud9:
+      - chromium-home:/root
+  thirdplanet:
     image: tidyrailroad/cloud9:5.0.0
     volumes:
-      - cloud9:/workspace
+      - thirdplanet-home:/root
+      - thirdplanet-workspace:/workspace
+      - srv-entrypoint:/srv/thirdplanet
     working_dir: /workspace
     command: --listen 0.0.0.0 -w /workspace --auth user:password
-    
+  gitlab:
+    image: gitlab/gitlab-ce:9.0.5-ce.0
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
+      - /etc/localtime:/etc/localtime:ro

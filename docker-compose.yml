@@ -1,11 +1,15 @@
 version: "2"
 volumes:
-  cloud9:
+  home:
+  workspace:
     external:
       named: 54ac88bb2f3b18576a6dd28ffbf65641441ca84b754efe5f696c4727a5b85a4f
   thirdplanet:
     external:
       named: a5ce186b612f5075ed2de5b83e64714ff80e0681894e92664c0e85b357f89432
+  gitlab-config:
+  gitlab-logs:
+  gitlab-data:
 services:
   chromium:
     image: docker.io/sassmann/debian-chromium
@@ -19,8 +23,15 @@ services:
   cloud9:
     image: tidyrailroad/cloud9:5.0.0
     volumes:
-      - cloud9:/workspace
+      - home:/root
+      - workspace:/workspace
       - thirdplanet:/workspace/config/thirdplanet
     working_dir: /workspace
     command: --listen 0.0.0.0 -w /workspace --auth user:password
-    
+  gitlab:
+    image: gitlab/gitlab-ce:9.0.5-ce.0
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
+      - /etc/localtime:/etc/localtime:ro

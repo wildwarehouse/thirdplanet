@@ -3,6 +3,9 @@ volumes:
   cloud9:
     external:
       named: 54ac88bb2f3b18576a6dd28ffbf65641441ca84b754efe5f696c4727a5b85a4f
+  thirdplanet:
+    external:
+      named: a5ce186b612f5075ed2de5b83e64714ff80e0681894e92664c0e85b357f89432
 services:
   chromium:
     image: docker.io/sassmann/debian-chromium
@@ -17,6 +20,7 @@ services:
     image: tidyrailroad/cloud9:5.0.0
     volumes:
       - cloud9:/workspace
+      - thirdplanet:/workspace/config/thirdplanet
     working_dir: /workspace
     command: --listen 0.0.0.0 -w /workspace --auth user:password
     

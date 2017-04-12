@@ -25,7 +25,7 @@ services:
     volumes:
       - home:/root
       - workspace:/workspace
-      - thirdplanet:/workspace/config/thirdplanet
+      - thirdplanet:/workspace/alt/thirdplanet
     working_dir: /workspace
     command: --listen 0.0.0.0 -w /workspace --auth user:password
   gitlab:

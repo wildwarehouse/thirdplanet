@@ -27,13 +27,13 @@ done &&
     ([ ! -z "${GITHUB_ACCESS_TOKEN}" ] || (echo GITHUB_ACCESS_TOKEN is not defined. && exit 65)) &&
     ([ ! -z "${GITHUB_USER_ID}" ] || (echo GITHUB_USER_ID is not defined. && exit 66)) &&
     ([ ! -z "${REPORT_PASSPHRASE}" ] || (echo REPORT_PASSPHRASE is not defined. && exit 67)) &&
-    ([ -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh)" ] || (echo "There is already a dot-ssh volume." && exit 68)) &&
-    docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.dot-ssh &&
+    ([ -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh)" ] || (echo "There is already a dot-ssh volume." && exit 68)) &&
+    docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.github.dot-ssh &&
     docker \
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
         --workdir /root/.ssh \
         --entrypoint chmod \
         alpine:3.4 \
@@ -43,7 +43,7 @@ done &&
         --interactive \
         --rm \
         --entrypoint ssh-keygen \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
         --workdir /root/.ssh \
         tidyrailroad/openssh-client:0.0.0 \
         -f /root/.ssh/upstream_id_rsa -P "" -C "upstream" &&
@@ -54,7 +54,7 @@ done &&
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh:ro \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh:ro \
         --workdir /root/.ssh \
         alpine:3.4 \
         cat upstream_id_rsa.pub)"
@@ -71,7 +71,7 @@ EOF
         --interactive \
         --rm \
         --entrypoint ssh-keygen \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
         --workdir /root/.ssh \
         tidyrailroad/openssh-client:0.0.0 \
         -f /root/.ssh/origin_id_rsa -P "" -C "origin" &&
@@ -82,7 +82,7 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh:ro \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh:ro \
         --workdir /root/.ssh \
         alpine:3.4 \
         cat origin_id_rsa.pub)"
@@ -99,7 +99,7 @@ EOF
         --interactive \
         --rm \
         --entrypoint ssh-keygen \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
         --workdir /root/.ssh \
         tidyrailroad/openssh-client:0.0.0 \
         -f /root/.ssh/report_id_rsa -P "${REPORT_PASSPHRASE}" -C "report" &&
@@ -110,7 +110,7 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh:ro \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh:ro \
         --workdir /root/.ssh \
         alpine:3.4 \
         cat report_id_rsa.pub)"
@@ -143,7 +143,7 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
         --workdir /root/.ssh \
         --entrypoint tee \
         alpine:3.4 \
@@ -152,7 +152,7 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
         --workdir /root/.ssh \
         --entrypoint chmod \
         alpine:3.4 \

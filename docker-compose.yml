@@ -1,26 +1,21 @@
-version: "2"
+version: "3"
 volumes:
-  home:
-  workspace:
-    external:
-      named: 54ac88bb2f3b18576a6dd28ffbf65641441ca84b754efe5f696c4727a5b85a4f
-  thirdplanet:
-    external:
-      named: a5ce186b612f5075ed2de5b83e64714ff80e0681894e92664c0e85b357f89432
+  chromium-home:
+  thirdplanet-home:
+  thirdplanet-workspace:
   gitlab-config:
   gitlab-logs:
   gitlab-data:
 services:
   chromium:
-    image: docker.io/sassmann/debian-chromium
+    image: tidyrailroad/chromium:0.0.0
+    privileged: true
     environment:
       - DISPLAY
-    devices:
-      - /dev/dri/card0
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
-      - /run/user/$UID/pulse/native:/tmp/pulse:ro
-  cloud9:
+      - chromium-home:/root
+  thirdplanet:
     image: tidyrailroad/cloud9:5.0.0
     volumes:
       - home:/root

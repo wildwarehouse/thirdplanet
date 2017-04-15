@@ -64,7 +64,6 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
         tidyrailroad/curl:0.0.0 \
         --header "Content-Type: application/x-www-form-urlencoded" --user "${GITHUB_USER_ID}:${GITHUB_ACCESS_TOKEN}" --data @- "https://api.github.com/user/keys" &&
     docker \
@@ -93,7 +92,6 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
         tidyrailroad/curl:0.0.0 \
         --header "Content-Type: application/x-www-form-urlencoded" --user "${GITHUB_USER_ID}:${GITHUB_ACCESS_TOKEN}" --data @- "https://api.github.com/user/keys" &&
     docker \
@@ -122,8 +120,41 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
         tidyrailroad/curl:0.0.0 \
-        --header "Content-Type: application/x-www-form-urlencoded" --user "${GITHUB_USER_ID}:${GITHUB_ACCESS_TOKEN}" --data @- "https://api.github.com/user/keys"
-        
+        --header "Content-Type: application/x-www-form-urlencoded" --user "${GITHUB_USER_ID}:${GITHUB_ACCESS_TOKEN}" --data @- "https://api.github.com/user/keys" &&
+    (cat <<EOF
+Host upstream
+User git
+HostName github.com
+IdentityFile ~/.ssh/upstream_id_rsa
+
+Host origin
+User git
+HostName github.com
+IdentityFile ~/.ssh/origin_id_rsa
+
+Host report
+User git
+HostName github.com
+IdentityFile ~/.ssh/report_id_rsa
+
+EOF
+    ) | docker \
+        run \
+        --interactive \
+        --rm \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
+        --workdir /root/.ssh \
+        --entrypoint tee \
+        alpine:3.4 \
+        config &&
+    docker \
+        run \
+        --interactive \
+        --rm \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.dot-ssh):/root/.ssh \
+        --workdir /root/.ssh \
+        --entrypoint chmod \
+        alpine:3.4 \
+        0600 config
         

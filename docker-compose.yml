@@ -10,13 +10,23 @@ volumes:
       name: ${BIN}
 services:
   chromium:
-    image: tidyrailroad/chromium:0.0.0
     privileged: true
+    tty: true
+    shm_size: "256m"
     environment:
-      - DISPLAY
+      - DISPLAY=unix$DISPLAY
+      - TARGETUID=${HOST_UID}
+      - XDG_RUNTIME_DIR=/run/user/${HOST_UID}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
-      - chromium-home:/root
+      - /run/user/${HOST_UID}/pulse:/run/user/${HOST_UID}/pulse:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
+      - /var/lib/dbus:/var/lib/dbus:ro
+      - /tmp:/tmp
+      - /home/${HOST_USER}:/home/chromium/.config/pulse:ro
+      - chromium-hom:/data
+      - /dev/video0:/dev/video:ro
   thirdplanet:
     image: tidyrailroad/cloud9:5.0.0
     volumes:

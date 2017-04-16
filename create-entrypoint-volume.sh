@@ -33,12 +33,53 @@ done &&
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
         --workdir /usr/local/src \
         tidyrailroad/git:0.2.0 \
-        remote add upstream upstream/wildwarehouse/thirdplanet.git &&
+        remote add upstream ssh://upstream/wildwarehouse/thirdplanet.git &&
+    docker \
+        run \
+        --interactive \
+        --tty \
+        --rm \
+        --volume $(docker volume ls --quiet --filter  label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
+        --workdir /usr/local/src \
+        --entrypoint sh \
+        tidyrailroad/git:0.2.0 &&
+    BIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
+    (cat <<EOF
+#!/bin/sh
+
+docker \
+    run \
+    --interactive \
+    --rm \
+    --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh:ro \
+    --volume $(docker volume ls --quiet --filter  label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
+    --workdir /usr/local/src \
+    tidyrailroad/openssh-client:0.0.0 \
+    \${@}
+EOF
+) | docker \
+    run \
+    --interactive \
+    --rm \
+    --volume ${BIN}:/usr/local/src \
+    --workdir /usr/local/src \
+    alpine:3.4 \
+    tee ssh &&
     docker \
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh:ro \
+        --volume ${BIN}:/usr/local/src \
+        --workdir /usr/local/src \
+        --entrypoint chmod \
+        alpine:3.4 \
+        0500 ssh &&
+    docker \
+        run \
+        --interactive \
+        --rm \
+        --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+        --volume ${BIN}:/usr/local/bin:ro \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
         --workdir /usr/local/src \
         tidyrailroad/git:0.2.0 \
@@ -50,138 +91,4 @@ done &&
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
         --workdir /usr/local/src \
         tidyrailroad/git:0.2.0 \
-        checkout upstream/${BRANCH} &&
-        
-
-        
-        
-
-    docker \
-        run \
-        --interactive \
-        --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
-        --workdir /root/.ssh \
-        --entrypoint chmod \
-        alpine:3.4 \
-        0700 . &&
-    docker \
-        run \
-        --interactive \
-        --rm \
-        --entrypoint ssh-keygen \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
-        --workdir /root/.ssh \
-        tidyrailroad/openssh-client:0.0.0 \
-        -f /root/.ssh/upstream_id_rsa -P "" -C "upstream" &&
-    (cat <<EOF
-{
-    "title": "upstream",
-    "key": "$(docker \
-        run \
-        --interactive \
-        --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh:ro \
-        --workdir /root/.ssh \
-        alpine:3.4 \
-        cat upstream_id_rsa.pub)"
-}
-EOF
-    ) | docker \
-        run \
-        --interactive \
-        --rm \
-        tidyrailroad/curl:0.0.0 \
-        --header "Content-Type: application/x-www-form-urlencoded" --user "${GITHUB_USER_ID}:${GITHUB_ACCESS_TOKEN}" --data @- "https://api.github.com/user/keys" &&
-    docker \
-        run \
-        --interactive \
-        --rm \
-        --entrypoint ssh-keygen \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
-        --workdir /root/.ssh \
-        tidyrailroad/openssh-client:0.0.0 \
-        -f /root/.ssh/origin_id_rsa -P "" -C "origin" &&
-    (cat <<EOF
-{
-    "title": "origin",
-    "key": "$(docker \
-        run \
-        --interactive \
-        --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh:ro \
-        --workdir /root/.ssh \
-        alpine:3.4 \
-        cat origin_id_rsa.pub)"
-}
-EOF
-    ) | docker \
-        run \
-        --interactive \
-        --rm \
-        tidyrailroad/curl:0.0.0 \
-        --header "Content-Type: application/x-www-form-urlencoded" --user "${GITHUB_USER_ID}:${GITHUB_ACCESS_TOKEN}" --data @- "https://api.github.com/user/keys" &&
-    docker \
-        run \
-        --interactive \
-        --rm \
-        --entrypoint ssh-keygen \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
-        --workdir /root/.ssh \
-        tidyrailroad/openssh-client:0.0.0 \
-        -f /root/.ssh/report_id_rsa -P "${REPORT_PASSPHRASE}" -C "report" &&
-    (cat <<EOF
-{
-    "title": "report",
-    "key": "$(docker \
-        run \
-        --interactive \
-        --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh:ro \
-        --workdir /root/.ssh \
-        alpine:3.4 \
-        cat report_id_rsa.pub)"
-}
-EOF
-    ) | docker \
-        run \
-        --interactive \
-        --rm \
-        tidyrailroad/curl:0.0.0 \
-        --header "Content-Type: application/x-www-form-urlencoded" --user "${GITHUB_USER_ID}:${GITHUB_ACCESS_TOKEN}" --data @- "https://api.github.com/user/keys" &&
-    (cat <<EOF
-Host upstream
-User git
-HostName github.com
-IdentityFile ~/.ssh/upstream_id_rsa
-
-Host origin
-User git
-HostName github.com
-IdentityFile ~/.ssh/origin_id_rsa
-
-Host report
-User git
-HostName github.com
-IdentityFile ~/.ssh/report_id_rsa
-
-EOF
-    ) | docker \
-        run \
-        --interactive \
-        --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
-        --workdir /root/.ssh \
-        --entrypoint tee \
-        alpine:3.4 \
-        config &&
-    docker \
-        run \
-        --interactive \
-        --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
-        --workdir /root/.ssh \
-        --entrypoint chmod \
-        alpine:3.4 \
-        0600 config
-        
+        checkout upstream/${BRANCH}

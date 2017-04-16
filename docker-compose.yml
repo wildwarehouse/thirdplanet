@@ -6,6 +6,9 @@ volumes:
   gitlab-config:
   gitlab-logs:
   gitlab-data:
+  srv-entrypoint:
+    external:
+      name: ${ENTRYPOINT}
 services:
   chromium:
     image: tidyrailroad/chromium:0.0.0
@@ -20,7 +23,7 @@ services:
     volumes:
       - thirdplanet-home:/root
       - thirdplanet-workspace:/workspace
-      - ${ENTRYPOINT}:/srv/thirdplanet
+      - srv-entrypoint:/srv/thirdplanet
     working_dir: /workspace
     command: --listen 0.0.0.0 -w /workspace --auth user:password
   gitlab:

@@ -156,5 +156,11 @@ EOF
         --workdir /root/.ssh \
         --entrypoint chmod \
         alpine:3.4 \
-        0600 config
-        
+        0600 config &&
+    docker \
+        run \
+        --interactive \
+        --rm \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh \
+        tidyrailroad/openssh-client:0.0.0 \
+        -o StrictHostKeyChecking=no upstream

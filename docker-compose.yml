@@ -1,7 +1,6 @@
 version: "3"
 volumes:
   chromium-home:
-  thirdplanet-home:
   thirdplanet-workspace:
   gitlab-config:
   gitlab-logs:
@@ -21,9 +20,9 @@ services:
   thirdplanet:
     image: tidyrailroad/cloud9:5.0.0
     volumes:
-      - thirdplanet-home:/root
       - thirdplanet-workspace:/workspace
-      - srv-bin:/root/bin
+      - srv-bin:/root/bin:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     working_dir: /workspace
     command: --listen 0.0.0.0 -w /workspace --auth user:password
   gitlab:

@@ -24,7 +24,7 @@ done &&
         --rm \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
         --workdir /usr/local/src \
-        tidyrailroad/git:0.0.0 \
+        tidyrailroad/git:0.2.0 \
         init &&
     docker \
         run \
@@ -32,7 +32,7 @@ done &&
         --rm \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
         --workdir /usr/local/src \
-        tidyrailroad/git:0.0.0 \
+        tidyrailroad/git:0.2.0 \
         remote add upstream upstream/wildwarehouse/thirdplanet.git &&
     docker \
         run \
@@ -41,7 +41,7 @@ done &&
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh):/root/.ssh:ro \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
         --workdir /usr/local/src \
-        tidyrailroad/git:0.0.0 \
+        tidyrailroad/git:0.2.0 \
         fetch upstream ${BRANCH} &&
     docker \
         run \
@@ -49,7 +49,7 @@ done &&
         --rm \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
         --workdir /usr/local/src \
-        tidyrailroad/git:0.0.0 \
+        tidyrailroad/git:0.2.0 \
         checkout upstream/${BRANCH} &&
         
 

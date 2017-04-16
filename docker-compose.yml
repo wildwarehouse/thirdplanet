@@ -32,6 +32,7 @@ services:
   thirdplanet:
     image: tidyrailroad/cloud9:5.0.0
     volumes:
+      - thirdplanet-home:/root
       - thirdplanet-workspace:/workspace
       - srv-bin:/root/bin:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro

@@ -1,12 +1,11 @@
 #!/bin/sh
 
+
 docker \
     run \
     --interactive \
-    --tty \
     --rm \
-    --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+    --env ENTRYPOINT=$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint) \
     --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
     --workdir /usr/local/src \
-    tidyrailroad/docker-compose:0.1.0 \
-    up -d
+    docker/compose:1.11.2 up -d

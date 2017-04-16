@@ -1,6 +1,7 @@
 version: "3"
 volumes:
   chromium-home:
+  thirdplanet-home:
   thirdplanet-workspace:
   gitlab-config:
   gitlab-logs:

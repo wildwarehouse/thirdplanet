@@ -6,9 +6,6 @@ volumes:
   gitlab-config:
   gitlab-logs:
   gitlab-data:
-  srv-entrypoint:
-    external:
-      name: ${ENTRYPOINT}
   srv-bin:
     external:
       name: ${BIN}
@@ -26,7 +23,6 @@ services:
     volumes:
       - thirdplanet-home:/root
       - thirdplanet-workspace:/workspace
-      - srv-entrypoint:/srv/entrypoint
       - srv-bin:/root/bin
     working_dir: /workspace
     command: --listen 0.0.0.0 -w /workspace --auth user:password

@@ -26,7 +26,7 @@ services:
       - /var/lib/dbus:/var/lib/dbus:ro
       - /tmp:/tmp
       - /home/${HOST_USER}:/home/chromium/.config/pulse:ro
-      - chromium-hom:/data
+      - chromium-home:/data
       - /dev/video0:/dev/video:ro
   thirdplanet:
     image: tidyrailroad/cloud9:5.0.0

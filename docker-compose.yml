@@ -10,6 +10,7 @@ volumes:
       name: ${BIN}
 services:
   chromium:
+    image: urgemerge/chromium-pulseaudio
     privileged: true
     tty: true
     shm_size: "256m"

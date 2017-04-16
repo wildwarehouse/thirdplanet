@@ -18,9 +18,9 @@ services:
   thirdplanet:
     image: tidyrailroad/cloud9:5.0.0
     volumes:
-      - home:/root
-      - workspace:/workspace
-      - thirdplanet:/srv/thirdplanet
+      - thirdplanet-home:/root
+      - third-planet-workspace:/workspace
+      - ${ENTRYPOINT}:/srv/thirdplanet
     working_dir: /workspace
     command: --listen 0.0.0.0 -w /workspace --auth user:password
   gitlab:

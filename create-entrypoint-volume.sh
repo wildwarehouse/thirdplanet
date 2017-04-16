@@ -34,15 +34,6 @@ done &&
         --workdir /usr/local/src \
         tidyrailroad/git:0.2.0 \
         remote add upstream ssh://upstream/wildwarehouse/thirdplanet.git &&
-    docker \
-        run \
-        --interactive \
-        --tty \
-        --rm \
-        --volume $(docker volume ls --quiet --filter  label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
-        --workdir /usr/local/src \
-        --entrypoint sh \
-        tidyrailroad/git:0.2.0 &&
     BIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
     (cat <<EOF
 #!/bin/sh
@@ -84,6 +75,7 @@ EOF
         --workdir /usr/local/src \
         tidyrailroad/git:0.2.0 \
         fetch upstream ${BRANCH} &&
+    docker volume rm ${BIN} &&
     docker \
         run \
         --interactive \

@@ -19,7 +19,7 @@ services:
     image: tidyrailroad/cloud9:5.0.0
     volumes:
       - thirdplanet-home:/root
-      - third-planet-workspace:/workspace
+      - thirdplanet-workspace:/workspace
       - ${ENTRYPOINT}:/srv/thirdplanet
     working_dir: /workspace
     command: --listen 0.0.0.0 -w /workspace --auth user:password

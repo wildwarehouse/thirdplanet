@@ -1,22 +1,29 @@
 #!/bin/sh
 
-while [ ${#} -gt 0 ]
-do
-    case ${1} in
-        --branch)
-            BRANCH=${2} &&
-                shift &&
-                shift
-        ;;
-        *)
-            echo Unknown Option: ${1} &&
-                exit 64
-        ;;
-    esac
-done &&
-    ( [ ! -z "${BRANCH}" ] || (echo There is no BRANCH defined && exit 65)) &&
-    ([ ! -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh)" ] || (echo "There is no dot-ssh volume." && exit 66)) &&
-    ([ -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint)" ] || (echo "There is already a entrypoint volume." && exit 67)) &&
+errorout(){
+    if [ ${1} ]
+    then
+        echo ${2} &&
+            exit ${3}
+    fi
+} &&
+    while [ ${#} -gt 0 ]
+    do
+        case ${1} in
+            --branch)
+                BRANCH=${2} &&
+                    shift &&
+                    shift
+            ;;
+            *)
+                echo Unknown Option: ${1} &&
+                    exit 64
+            ;;
+        esac
+    done &&
+    errorout [ -z "${BRANCH}" ] "There is no BRANCH defined" 65 &&
+    errorout [ -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh)" ] "There is no dot-ssh volume." 66 &&
+    errorout [ ! -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint)" ] "There is already a entrypoint volume." 67 &&
     docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.entrypoint &&
     docker \
         run \

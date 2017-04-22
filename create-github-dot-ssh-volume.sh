@@ -1,33 +1,40 @@
 #!/bin/sh
 
-while [ ${#} -gt 0 ]
-do
-    case ${1} in
-        --github-access-token)
-            GITHUB_ACCESS_TOKEN=${2} &&
-                shift &&
-                shift
-        ;;
-        --github-user-id)
-            GITHUB_USER_ID=${2} &&
-                shift &&
-                shift
-        ;;
-        --report-passphrase)
-            REPORT_PASSPHRASE=${2} &&
-                shift &&
-                shift
-        ;;
-        *)
-            echo Unknown Option: ${1} &&
-                exit 64
-        ;;
-    esac
-done &&
-    ([ ! -z "${GITHUB_ACCESS_TOKEN}" ] || (echo GITHUB_ACCESS_TOKEN is not defined. && exit 65)) &&
-    ([ ! -z "${GITHUB_USER_ID}" ] || (echo GITHUB_USER_ID is not defined. && exit 66)) &&
-    ([ ! -z "${REPORT_PASSPHRASE}" ] || (echo REPORT_PASSPHRASE is not defined. && exit 67)) &&
-    ([ -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh)" ] || (echo "There is already a dot-ssh volume." && exit 68)) &&
+errorout(){
+    if [ ${1} ]
+    then
+        echo ${2} &&
+            exit ${3}
+    fi
+} &&
+    while [ ${#} -gt 0 ]
+    do
+        case ${1} in
+            --github-access-token)
+                GITHUB_ACCESS_TOKEN=${2} &&
+                    shift &&
+                    shift
+            ;;
+            --github-user-id)
+                GITHUB_USER_ID=${2} &&
+                    shift &&
+                    shift
+            ;;
+            --report-passphrase)
+                REPORT_PASSPHRASE=${2} &&
+                    shift &&
+                    shift
+            ;;
+            *)
+                echo Unknown Option: ${1} &&
+                    exit 64
+            ;;
+        esac
+    done &&
+    errorout [ -z "${GITHUB_ACCESS_TOKEN}" ] "GITHUB_ACCESS_TOKEN is not defined." 65 &&
+    errorout [ -z "${GITHUB_USER_ID}" ] "GITHUB_USER_ID is not defined." 66 &&
+    errorout [ -z "${REPORT_PASSPHRASE}" ] "REPORT_PASSPHRASE is not defined." 67 &&
+    errorout [ ! -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh)" ] "There is already a dot-ssh volume." 68 &&
     docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.github.dot-ssh &&
     docker \
         run \

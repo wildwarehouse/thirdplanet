@@ -51,7 +51,9 @@ blankout(){
         docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/ssh-keygen:0.0.0 "${@}"
     } &&
     curl(){
-        docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh --workdir /home/user/.ssh bigsummer/curl:0.0.0 "${@}"
+        echo BEFORE &&
+        docker run --interactive --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh --workdir /home/user/.ssh bigsummer/curl:0.0.0 "${@}" &&
+        echo AFTER 
     } &&
     tee(){
         docker run --interactive --rm --tty --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh --workdir /home/user/.ssh bigsummer/tee:0.0.0 "${@}"
@@ -69,8 +71,8 @@ blankout(){
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/root/.ssh:ro \
-        --workdir /root/.ssh \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh:ro \
+        --workdir /home/user/.ssh \
         alpine:3.4 \
         cat ${1}_id_rsa.pub)"
 }

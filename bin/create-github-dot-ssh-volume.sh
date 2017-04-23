@@ -51,15 +51,13 @@ blankout(){
         docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/ssh-keygen:0.0.0 "${@}"
     } &&
     curl(){
-        echo BEFORE &&
-        docker run --interactive --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh --workdir /home/user/.ssh bigsummer/curl:0.0.0 "${@}" &&
-        echo AFTER 
+        docker run --interactive --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/curl:0.0.0 "${@}"
     } &&
     tee(){
-        docker run --interactive --rm --tty --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh --workdir /home/user/.ssh bigsummer/tee:0.0.0 "${@}"
+        docker run --interactive --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/tee:0.0.0 "${@}"
     } &&
     ssh(){
-        docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh --workdir /home/user/.ssh bigsummer/ssh:0.0.0 "${@}"
+        docker run --interactive --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/ssh:0.0.0 "${@}"
     } &&
     chmod 0700 /home/user/.ssh &&
     push_key(){
@@ -72,9 +70,8 @@ blankout(){
         --interactive \
         --rm \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh:ro \
-        --workdir /home/user/.ssh \
-        alpine:3.4 \
-        cat ${1}_id_rsa.pub)"
+        wildwarehouse/fedora:0.0.0 \
+        cat /home/user/.ssh/${1}_id_rsa.pub)"
 }
 EOF
         ) | curl --header "Content-Type: application/x-www-form-urlencoded" --user "${GITHUB_USER_ID}:${GITHUB_ACCESS_TOKEN}" --data @- "https://api.github.com/user/keys"
@@ -99,6 +96,7 @@ HostName github.com
 IdentityFile ~/.ssh/report_id_rsa
 
 EOF
-    ) | tee config &&
-    chmod 0600 config &&
+    ) | tee /home/user/.ssh/config &&
+    chmod 0600 /home/user/.ssh/config &&
+    echo ALPHA &&
     ssh -o StrictHostKeyChecking=no upstream

@@ -1,12 +1,19 @@
 #!/bin/sh
 
-errorout(){
-    if [ ${1} ]
+blankout(){
+    if [ -z "${1}" ]
     then
         echo ${2} &&
             exit ${3}
     fi
 } &&
+    noblankout(){
+        if [ ! -z "${1}" ]
+        then
+            echo ${2} &&
+                exit ${3}
+        fi
+    } &&
     while [ ${#} -gt 0 ]
     do
         case ${1} in
@@ -21,18 +28,21 @@ errorout(){
             ;;
         esac
     done &&
-    errorout [ -z "${BRANCH}" ] "There is no BRANCH defined" 65 &&
-    errorout [ -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh)" ] "There is no dot-ssh volume." 66 &&
-    errorout [ ! -z "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint)" ] "There is already a entrypoint volume." 67 &&
+    blankout "${BRANCH}" "There is no BRANCH defined" 65 &&
+    blankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot-ssh)" "There is no dot-ssh volume." 66 &&
+    noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint)" "There is already a entrypoint volume." 67 &&
     docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.entrypoint &&
+    docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/srv wildwarehouse/chown:0.0.0 &&
+    echo BEFORE INIT &&
     docker \
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
-        --workdir /usr/local/src \
-        tidyrailroad/git:0.2.0 \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
+        --workdir /home/user \
+        bigsummer/git:0.0.0 \
         init &&
+    echo INIT DONE &&
     docker \
         run \
         --interactive \

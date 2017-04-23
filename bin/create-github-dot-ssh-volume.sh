@@ -48,10 +48,7 @@ blankout(){
         docker run --interactive --tty --rm --volume ${VOLUME}:/home/user/.ssh wildwarehouse/fedora:0.0.0 chmod "${@}"
     } &&
     sshkeygen(){
-        echo KEY GEN -- "${@}" &&
-        echo $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh) &&
-        docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/ssh-keygen:0.0.0 "${@}" &&
-        echo AFTER
+        docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/ssh-keygen:0.0.0 "${@}"
     } &&
     curl(){
         docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh --workdir /home/user/.ssh bigsummer/curl:0.0.0 "${@}"

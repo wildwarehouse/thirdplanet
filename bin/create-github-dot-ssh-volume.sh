@@ -98,5 +98,4 @@ IdentityFile ~/.ssh/report_id_rsa
 EOF
     ) | tee /home/user/.ssh/config &&
     chmod 0600 /home/user/.ssh/config &&
-    echo ALPHA &&
     ssh -o StrictHostKeyChecking=no upstream

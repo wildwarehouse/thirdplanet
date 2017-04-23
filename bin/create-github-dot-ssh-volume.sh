@@ -44,15 +44,8 @@ blankout(){
     noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh)" "There is already a dot-ssh volume." 68 &&
     VOLUME=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.github.dot_ssh) &&
     docker run --interactive --tty --rm --volume ${VOLUME}:/srv wildwarehouse/chown:0.0.0 &&
-    echo ${VOLUME} &&
-    docker run --interactive --tty --rm --volume ${VOLUME}:/srv/alpha wildwarehouse/fedora:0.0.0 touch /srv/alpha/good1 &&
-    docker run --interactive --tty --rm --volume ${VOLUME}:/srv/alpha wildwarehouse/fedora:0.0.0 touch /srv/alpha/good2 &&
-    docker run --interactive --tty --rm --volume ${VOLUME}:/srv/alpha wildwarehouse/fedora:0.0.0 chmod 0700 /srv/alpha &&
-    echo ${VOLUME} &&
     chmod(){
-        echo BEFORE &&
-        docker run --interactive --tty --rm --volume ${VOLUME}:/srv/alpha --workdir /srv/alpha wildwarehouse/fedora:0.0.0 chmod "${@}" &&
-        echo AFTER
+        docker run --interactive --tty --rm --volume ${VOLUME}:/home/user/.ssh wildwarehouse/fedora:0.0.0 chmod "${@}"
     } &&
     sshkeygen(){
         docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh --workdir /home/user/.ssh bigsummer/ssh-keygen:0.0.0 "${@}"
@@ -66,8 +59,8 @@ blankout(){
     ssh(){
         docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh --workdir /home/user/.ssh bigsummer/ssh:0.0.0 "${@}"
     } &&
+    chmod 0700 /home/user/.ssh &&
     push_key(){
-        chmod 0700 . &&
             ssh-keygen /home/.ssh/${1}_id_rsa -P "${2}" -C "${1}" &&
             (cat <<EOF
 {

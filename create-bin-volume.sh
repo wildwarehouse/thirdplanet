@@ -31,7 +31,7 @@ blankout(){
     blankout "${BRANCH}" "There is no BRANCH defined" 65 &&
     blankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh)" "There is no dot_ssh volume." 66 &&
     noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.bin)" "There is already a entrypoint volume." 67 &&
-    docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.coldbreeze.structure.bin &&
+    docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.bin &&
     docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.bin):/srv wildwarehouse/chown:0.0.0 &&
     docker \
         run \

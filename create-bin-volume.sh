@@ -156,6 +156,7 @@ EOF
         bigsummer/git:0.0.0 \
         fetch upstream ${BRANCH} &&
     docker volume rm ${BIN} ${SBIN} ${SUDO} &&
+    docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.bin):/srv wildwarehouse/chown:0.0.0 &&
     docker \
         run \
         --interactive \

@@ -50,7 +50,7 @@ blankout(){
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
         --workdir /home/user \
         bigsummer/git:0.0.0 \
-        remote add upstream ssh://upstream/wildwarehouse/thirdplanet.git &&
+        remote add upstream ssh://upstream/wildwarehouse/coldbreeze.git &&
     echo A3 &&
     BIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
     SBIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
@@ -165,6 +165,7 @@ EOF
     echo A6 &&
     docker volume rm ${BIN} ${SBIN} ${SUDO} &&
     echo A7 &&
+    docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/srv wildwarehouse/chown:0.0.0 &&
     docker \
         run \
         --interactive \

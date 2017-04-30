@@ -33,7 +33,6 @@ blankout(){
     noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint)" "There is already a entrypoint volume." 67 &&
     docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.entrypoint &&
     docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/srv wildwarehouse/chown:0.0.0 &&
-    echo A1 &&
     docker \
         run \
         --interactive \
@@ -42,7 +41,6 @@ blankout(){
         --workdir /home/user \
         bigsummer/git:0.0.0 \
         init &&
-    echo A2 &&
      docker \
         run \
         --interactive \
@@ -51,7 +49,6 @@ blankout(){
         --workdir /home/user \
         bigsummer/git:0.0.0 \
         remote add upstream ssh://upstream/wildwarehouse/coldbreeze.git &&
-    echo A3 &&
     BIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
     SBIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
     SUDO=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
@@ -103,7 +100,6 @@ EOF
     --user root \
     bigsummer/tee:0.0.0 \
     ssh &&
-    echo A4 &&
     docker \
         run \
         --interactive \
@@ -113,7 +109,6 @@ EOF
         --user root \
         bigsummer/chmod:0.0.0 \
         0500 ssh.sh &&
-    echo A4 1 &&
     docker \
         run \
         --interactive \
@@ -123,7 +118,6 @@ EOF
         --user root \
         bigsummer/chmod:0.0.0 \
         0555 ssh &&
-    echo A4 2 &&
     docker \
         run \
         --interactive \
@@ -133,7 +127,6 @@ EOF
         --user root \
         bigsummer/chmod:0.0.0 \
         0444 ssh &&
-    echo A5 &&
     docker \
         run \
         --interactive \
@@ -162,10 +155,8 @@ EOF
         --workdir /home/user \
         bigsummer/git:0.0.0 \
         fetch upstream ${BRANCH} &&
-    echo A6 &&
-    docker volume rm ${BIN} ${SBIN} ${SUDO} &&
-    echo A7 &&
     docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/srv wildwarehouse/chown:0.0.0 &&
+    sleep 10s &&
     docker \
         run \
         --interactive \
@@ -175,4 +166,4 @@ EOF
         --workdir /usr/local/src \
         bigsummer/git:0.0.0 \
         checkout upstream/${BRANCH} &&
-    echo A8
+    docker volume rm ${BIN} ${SBIN} ${SUDO}

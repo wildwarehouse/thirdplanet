@@ -30,25 +30,25 @@ blankout(){
     done &&
     blankout "${BRANCH}" "There is no BRANCH defined" 65 &&
     blankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh)" "There is no dot_ssh volume." 66 &&
-    noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint)" "There is already a entrypoint volume." 67 &&
+    noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint)" "There is already an entrypoint volume." 67 &&
     docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.entrypoint &&
-    docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/srv wildwarehouse/chown:0.0.0 &&
+    docker run --interactive --tty --rm --env NAME=entrypoint --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/srv wildwarehouse/chown:2.0.2 &&
     docker \
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
-        --workdir /home/user \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
+        --workdir /usr/local/src/entrypoint \
         bigsummer/git:0.0.0 \
         init &&
      docker \
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
-        --workdir /home/user \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
+        --workdir /usr/local/src/entrypoint \
         bigsummer/git:0.0.0 \
-        remote add upstream ssh://upstream/wildwarehouse/coldbreeze.git &&
+        remote add upstream ssh://upstream/wildwarehouse/thirdplanet.git &&
     BIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
     SBIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
     SUDO=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
@@ -61,7 +61,7 @@ docker \
     --rm \
     --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh \
     --volume $(docker volume ls --quiet --filter  label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
-    --workdir /usr/local/src \
+    --workdir /usr/local/src/entrypoint \
     bigsummer/ssh:0.0.0 \
     "\${@}"
 EOF
@@ -136,34 +136,17 @@ EOF
         --volume ${BIN}:/usr/local/bin:ro \
         --volume ${SBIN}:/usr/local/sbin:ro \
         --volume ${SUDO}:/etc/sudoers.d:ro \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
         --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-        --workdir /home/user \
-        bigsummer/git:0.0.0 \
-        remote -v &&
-    docker \
-        run \
-        --interactive \
-        --rm \
-        --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
-        --volume ${BIN}:/usr/local/bin:ro \
-        --volume ${SBIN}:/usr/local/sbin:ro \
-        --volume ${SUDO}:/etc/sudoers.d:ro \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
-        --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-        --workdir /home/user \
+        --workdir /usr/local/src/entrypoint \
         bigsummer/git:0.0.0 \
         fetch upstream ${BRANCH} &&
-    docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/srv wildwarehouse/chown:0.0.0 &&
-    sleep 10s &&
+    docker volume rm ${BIN} ${SBIN} ${SUDO} &&
     docker \
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
-        --workdir /usr/local/src \
+        --workdir /usr/local/src/entrypoint \
         bigsummer/git:0.0.0 \
-        checkout upstream/${BRANCH} &&
-    docker volume rm ${BIN} ${SBIN} ${SUDO}
+        checkout upstream/${BRANCH}

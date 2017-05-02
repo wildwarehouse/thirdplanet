@@ -43,7 +43,7 @@ docker \
     --rm \
     --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh \
     --volume $(docker volume ls --quiet --filter  label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
-    --workdir /usr/local/src \
+    --workdir /usr/local/src/entrypoint \
     bigsummer/ssh:0.0.0 \
     "\${@}"
 EOF
@@ -118,9 +118,9 @@ EOF
         --volume ${BIN}:/usr/local/bin:ro \
         --volume ${SBIN}:/usr/local/sbin:ro \
         --volume ${SUDO}:/etc/sudoers.d:ro \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
         --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-        --workdir /home/user \
+        --workdir /usr/local/src/entrypoint \
         bigsummer/git:0.0.0 \
         fetch upstream ${BRANCH} &&
     docker volume rm ${BIN} ${SBIN} ${SUDO} &&
@@ -128,8 +128,7 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
-        --workdir /usr/local/src \
+        --workdir /usr/local/src/entrypoint \
         bigsummer/git:0.0.0 \
         checkout upstream/${BRANCH}

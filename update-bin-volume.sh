@@ -123,7 +123,8 @@ EOF
         --workdir /home/user \
         bigsummer/git:0.0.0 \
         fetch upstream ${BRANCH} &&
-    docker volume rm ${BIN} ${SBIN} ${SUDO} &&
+    docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.bin):/srv wildwarehouse/chown:0.0.0 &&
+    sleep 10s &&
     docker \
         run \
         --interactive \
@@ -132,4 +133,5 @@ EOF
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.bin):/usr/local/src \
         --workdir /usr/local/src \
         bigsummer/git:0.0.0 \
-        checkout upstream/${BRANCH}
+        checkout upstream/${BRANCH} &&
+    docker volume rm ${BIN} ${SBIN} ${SUDO}

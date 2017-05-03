@@ -42,26 +42,79 @@ blankout(){
     blankout "${GITHUB_USER_ID}" "GITHUB_USER_ID is not defined." 66 &&
     blankout "${REPORT_PASSPHRASE}" "REPORT_PASSPHRASE is not defined." 67 &&
     noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh)" "There is already a dot-ssh volume." 68 &&
-    VOLUME=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.github.dot_ssh) &&
-    docker run --interactive --tty --rm --volume ${VOLUME}:/srv wildwarehouse/chown:0.0.0 &&
+    docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.github.dot_ssh &&
+    docker \
+        run \
+        --interactive \
+        --tty \
+        --rm \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+        --workdir /home/user/.ssh \
+        --user root \
+        bigsummer/mkdir:0.0.0 \
+        .ssh &&
+     docker \
+        run \
+        --interactive \
+        --tty \
+        --rm \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+        --workdir /home/user/.ssh \
+        --user root \
+        bigsummer/chown:0.0.0 \
+        user:user . &&
     chmod(){
-        docker run --interactive --tty --rm --volume ${VOLUME}:/home/user/.ssh wildwarehouse/fedora:0.0.0 chmod "${@}"
+        docker \
+            run \
+            --interactive \
+            --tty \
+            --rm \
+            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+            --workdir /home/user/.ssh \
+            bigsummer/chmod:0.0.0 \
+            "${@}"
     } &&
     sshkeygen(){
-        docker run --interactive --tty --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/ssh-keygen:0.0.0 "${@}"
+        docker \
+            run \
+            --interactive \
+            --tty \
+            --rm \
+            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+            --workdir /home/user/.ssh \
+            bigsummer/ssh-keygen:0.0.0 \
+            "${@}"
     } &&
     curl(){
-        docker run --interactive --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/curl:0.0.0 "${@}"
+        docker \
+            run \
+            --interactive \
+            --rm \
+            bigsummer/curl:0.0.0 \
+            "${@}"
     } &&
     tee(){
-        docker run --interactive --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/tee:0.0.0 "${@}"
+        docker \
+            run \
+            --interactive \
+            --rm \
+            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/ \
+            --workdir /home/user/.ssh \
+            bigsummer/tee:0.0.0 \
+            "${@}"
     } &&
     ssh(){
-        docker run --interactive --rm --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh bigsummer/ssh:0.0.0 "${@}"
+        docker \
+            run \
+            --interactive \
+            --rm \
+            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+            bigsummer/ssh:0.0.0 \
+            "${@}"
     } &&
     chmod 0700 /home/user/.ssh &&
     push_key(){
-            sshkeygen -f /home/user/.ssh/${1}_id_rsa -P "${2}" -C "${1}" &&
+            sshkeygen -f ${1}_id_rsa -P "${2}" -C "${1}" &&
             (cat <<EOF
 {
     "title": "${1}",
@@ -69,9 +122,10 @@ blankout(){
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh:ro \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user:ro \
+        --workdir /home/user/.ssh \
         wildwarehouse/fedora:0.0.0 \
-        cat /home/user/.ssh/${1}_id_rsa.pub)"
+        cat ${1}_id_rsa.pub)"
 }
 EOF
         ) | curl --header "Content-Type: application/x-www-form-urlencoded" --user "${GITHUB_USER_ID}:${GITHUB_ACCESS_TOKEN}" --data @- "https://api.github.com/user/keys"
@@ -96,6 +150,6 @@ HostName github.com
 IdentityFile ~/.ssh/report_id_rsa
 
 EOF
-    ) | tee /home/user/.ssh/config &&
-    chmod 0600 /home/user/.ssh/config &&
+    ) | tee config &&
+    chmod 0600 config &&
     ssh -o StrictHostKeyChecking=no upstream

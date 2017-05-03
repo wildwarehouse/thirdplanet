@@ -49,7 +49,7 @@ blankout(){
         --tty \
         --rm \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user \
-        --workdir /home/user/.ssh \
+        --workdir /home/user \
         --user root \
         bigsummer/mkdir:0.0.0 \
         .ssh &&

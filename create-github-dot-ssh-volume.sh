@@ -41,14 +41,14 @@ blankout(){
     blankout "${GITHUB_ACCESS_TOKEN}" "GITHUB_ACCESS_TOKEN is not defined." 65 &&
     blankout "${GITHUB_USER_ID}" "GITHUB_USER_ID is not defined." 66 &&
     blankout "${REPORT_PASSPHRASE}" "REPORT_PASSPHRASE is not defined." 67 &&
-    noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh)" "There is already a dot-ssh volume." 68 &&
-    docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.thirdplanet.structure.github.dot_ssh &&
+    noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh)" "There is already a dot-ssh volume." 68 &&
+    docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.luckystar.structure.github.dot_ssh &&
     docker \
         run \
         --interactive \
         --tty \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user \
         --workdir /home/user/.ssh \
         --user root \
         bigsummer/mkdir:0.0.0 \
@@ -58,7 +58,7 @@ blankout(){
         --interactive \
         --tty \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user \
         --workdir /home/user/.ssh \
         --user root \
         bigsummer/chown:0.0.0 \
@@ -69,7 +69,7 @@ blankout(){
             --interactive \
             --tty \
             --rm \
-            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user \
             --workdir /home/user/.ssh \
             bigsummer/chmod:0.0.0 \
             "${@}"
@@ -80,7 +80,7 @@ blankout(){
             --interactive \
             --tty \
             --rm \
-            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user \
             --workdir /home/user/.ssh \
             bigsummer/ssh-keygen:0.0.0 \
             "${@}"
@@ -98,7 +98,7 @@ blankout(){
             run \
             --interactive \
             --rm \
-            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/ \
+            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user/ \
             --workdir /home/user/.ssh \
             bigsummer/tee:0.0.0 \
             "${@}"
@@ -108,7 +108,7 @@ blankout(){
             run \
             --interactive \
             --rm \
-            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user \
+            --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user \
             bigsummer/ssh:0.0.0 \
             "${@}"
     } &&
@@ -122,7 +122,7 @@ blankout(){
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user:ro \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user:ro \
         --workdir /home/user/.ssh \
         wildwarehouse/fedora:0.0.0 \
         cat ${1}_id_rsa.pub)"

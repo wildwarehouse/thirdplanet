@@ -29,8 +29,8 @@ blankout(){
         esac
     done &&
     blankout "${BRANCH}" "There is no BRANCH defined" 65 &&
-    blankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh)" "There is no dot_ssh volume." 66 &&
-    blankout "$(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint)" "There is no entrypoint volume." 67 &&
+    blankout "$(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh)" "There is no dot_ssh volume." 66 &&
+    blankout "$(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.entrypoint)" "There is no entrypoint volume." 67 &&
     BIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
     SBIN=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
     SUDO=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
@@ -41,9 +41,9 @@ docker \
     run \
     --interactive \
     --rm \
-    --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.github.dot_ssh):/home/user/.ssh \
-    --volume $(docker volume ls --quiet --filter  label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
-    --workdir /usr/local/src/entrypoint \
+    --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user \
+    --volume $(docker volume ls --quiet --filter  label=com.emorymerryman.luckystar.structure.entrypoint):/usr/local/src \
+    --workdir /usr/local/src/luckystar \
     bigsummer/ssh:0.0.0 \
     "\${@}"
 EOF
@@ -104,23 +104,13 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume ${SUDO}:/usr/local/src \
-        --workdir /usr/local/src \
-        --user root \
-        bigsummer/chmod:0.0.0 \
-        0444 ssh &&
-    docker \
-        run \
-        --interactive \
-        --rm \
         --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/home/user \
         --volume ${BIN}:/usr/local/bin:ro \
         --volume ${SBIN}:/usr/local/sbin:ro \
         --volume ${SUDO}:/etc/sudoers.d:ro \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.entrypoint):/usr/local/src \
         --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-        --workdir /usr/local/src/entrypoint \
+        --workdir /usr/local/src/luckystar \
         bigsummer/git:0.0.0 \
         fetch upstream ${BRANCH} &&
     docker volume rm ${BIN} ${SBIN} ${SUDO} &&
@@ -128,7 +118,7 @@ EOF
         run \
         --interactive \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.thirdplanet.structure.entrypoint):/usr/local/src \
-        --workdir /usr/local/src/entrypoint \
-        bigsummer/git:0.0.0 \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.entrypoint):/usr/local/src \
+        --workdir /usr/local/src/luckystar \
+        wildwarehouse/git:0.0.0 \
         checkout upstream/${BRANCH}

@@ -74,7 +74,6 @@ blankout(){
     (cat <<EOF
 #!/bin/sh
 
-echo AAAA 0020 >> /tmp/log.txt "\${@}" &&
 docker \
     run \
     --interactive \
@@ -83,7 +82,7 @@ docker \
     --volume $(docker volume ls --quiet --filter  label=com.emorymerryman.luckystar.structure.bin):/usr/local/src \
     --workdir /usr/local/src/bin \
     bigsummer/ssh:0.0.0 \
-    \${@}
+    "\${@}"
 EOF
 ) | docker \
     run \
@@ -109,8 +108,7 @@ EOF
     (cat <<EOF
 #!/bin/sh
 
-echo AAAA 0010 >> /tmp/log.txt "\${@}" &&
-sudo /usr/local/sbin/ssh.sh \${@}
+sudo /usr/local/sbin/ssh.sh "\${@}"
 EOF
 ) | docker \
     run \
@@ -139,22 +137,6 @@ EOF
         --user root \
         bigsummer/chmod:0.0.0 \
         0555 ssh &&
-    echo AAAA 0000 &&
-    (docker \
-        run \
-        --interactive \
-        --rm \
-        --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-        --volume ${BIN}:/usr/local/bin:ro \
-        --volume ${SBIN}:/usr/local/sbin:ro \
-        --volume ${SUDO}:/etc/sudoers.d:ro \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.bin):/usr/local/src \
-        --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-        --workdir /usr/local/src/bin \
-        --tty \
-        --entrypoint bash \
-        bigsummer/git:0.0.0 || echo WTF ) &&
-    echo AAAA 0001 &&
     docker \
         run \
         --interactive \
@@ -166,12 +148,8 @@ EOF
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.bin):/usr/local/src \
         --volume /var/run/docker.sock:/var/run/docker.sock:ro \
         --workdir /usr/local/src/bin \
-        --env GIT_SSH=/usr/local/bin/ssh \
-        --env GIT_SSH_COMMAND=/usr/local/bin/ssh \
         bigsummer/git:0.0.0 \
         fetch upstream ${BRANCH} &&
-    echo AAAA 0002 &&
-    echo AAAA 1000 &&
     docker volume rm ${BIN} ${SBIN} ${SUDO} &&
     docker \
         run \

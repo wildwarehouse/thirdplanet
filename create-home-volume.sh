@@ -23,34 +23,34 @@ blankout(){
             ;;
         esac
     done &&
-    noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.workspace)" "There is already a home volume." 67 &&
-    docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.luckystar.structure.workspace &&
+    noblankout "$(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.home)" "There is already a home volume." 67 &&
+    docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.luckystar.structure.home &&
     docker \
         run \
         --interactive \
         --tty \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.workspace):/usr/local/src \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.home):/usr/local/src \
         --workdir /usr/local/src \
         --user root \
         bigsummer/mkdir:0.0.0 \
-        workspace &&
+        user &&
     docker \
         run \
         --interactive \
         --tty \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.workspace):/usr/local/src \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.home):/usr/local/src \
         --workdir /usr/local/src \
         --user root \
         bigsummer/chown:0.0.0 \
-        user:user workspace &&
+        user:user user &&
     docker \
         run \
         --interactive \
         --tty \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.workspace):/usr/local/src \
-        --workdir /usr/local/src/workspace \
-        bigsummer/mkdir:0.0.0 \
-        projects
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.home):/usr/local/src \
+        --workdir /usr/local/src/user \
+        bigsummer/ln:0.0.0 \
+        --symbolic --force /srv/dot_ssh/.ssh .ssh

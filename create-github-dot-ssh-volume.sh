@@ -59,10 +59,10 @@ blankout(){
         --tty \
         --rm \
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.github.dot_ssh):/home/user \
-        --workdir /home/user/.ssh \
+        --workdir /home/user \
         --user root \
         bigsummer/chown:0.0.0 \
-        user:user . &&
+        user:user .ssh &&
     chmod(){
         docker \
             run \

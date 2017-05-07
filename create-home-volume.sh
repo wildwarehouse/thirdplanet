@@ -53,4 +53,22 @@ blankout(){
         --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.home):/home \
         --entrypoint /usr/bin/sh \
         wildwarehouse/cloud9:0.0.0 \
-        /opt/docker/install.sh
+        /opt/docker/install.sh &&
+    docker \
+        run \
+        --interactive \
+        --tty \
+        --rm \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.home):/home \
+        --workdir /home/user \
+        bigsummer/ln:0.0.0 \
+        --symbolic --force /srv/dot_ssh/.ssh .ssh &&
+    docker \
+        run \
+        --interactive \
+        --tty \
+        --rm \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.home):/home \
+        --workdir /home/user \
+        bigsummer/ln:0.0.0 \
+        --symbolic --force /srv/bin/bin bin

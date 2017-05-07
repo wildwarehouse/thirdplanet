@@ -25,32 +25,45 @@ blankout(){
     done &&
     blankout "$(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.sbin)" "There is no sbin volume." 66 &&
     blankout "$(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.sudo)" "There is no sudo volume." 67 &&
+    TEMP=$(docker volume create --label com.emorymerryman.tstamp=$(date +%s) --label com.emorymerryman.temporary) &&
+    (cat <<EOF
+#!/bin/sh
+
+ls -1 /input | while read SCRIPT
+do
+    echo "user ALL=(ALL) NOPASSWD:/usr/local/sbin/\${SCRIPT}" > /output/\${SCRIPT%.*} &&
+        chmod 0444 /output/${SCRIPT%.*}
+done
+EOF
+    ) | docker \
+        run \
+        --interactive \
+        --rm \
+        --volume ${TEMP}:/usr/local/src \
+        --workdir /usr/local/src \
+        --user root \
+        bigsummer/tee:0.0.0 \
+        generate.sh &&
     docker \
         run \
         --interactive \
         --tty \
         --rm \
-        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.sbin):/usr/local/src:ro \
+        --volume ${TEMP}:/usr/local/src \
         --workdir /usr/local/src \
-        bigsummer/ls:0.0.0 \
-        -1 | while read SCRIPT
-        do
-            echo "user ALL=(ALL) NOPASSWD:/usr/local/sbin/${SCRIPT}" | docker \
-                run \
-                --interactive \
-                --rm \
-                --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.sudo):/usr/local/src \
-                --workdir /usr/local/src \
-                --user root \
-                bigsummer/tee:0.0.0 \
-                ${SCRIPT%.*} &&
-                docker \
-                    run \
-                    --interactive \
-                    --rm \
-                    --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.sudo):/usr/local/src \
-                    --workdir /usr/local/src \
-                    --user root \
-                    bigsummer/chmod:0.0.0 \
-                    0444 ${SCRIPT%.*}
-        done
+        --user root \
+        bigsummer/chmod:0.0.0 \
+        0555 generate.sh &&
+    docker \
+        run \
+        --interactive \
+        --tty \
+        --rm \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.sbin):/input:ro \
+        --volume $(docker volume ls --quiet --filter label=com.emorymerryman.luckystar.structure.sudo):/output \
+        --volume ${TEMP}:/script \
+        --workdir /script \
+        --user root \
+        wildwarehouse/fedora:0.0.0 \
+        /script/generate.sh &&
+    docker volume rm ${TEMP}
